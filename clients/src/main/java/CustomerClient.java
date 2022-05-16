@@ -39,9 +39,21 @@ public final class CustomerClient {
 
         initUI();
 
-        browser.navigation().loadUrlAndWait("http://localhost:3000/");
+        String port = getPort(args);
+        String url = String.format("http://localhost:%s/", port);
+        browser.navigation().loadUrlAndWait(url);
         String initializeCustomerScript = String.format("initializeCustomer('%s')", CUSTOMER_ID);
         browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript(initializeCustomerScript));
+    }
+
+    private static String getPort(String[] args) {
+        String port = "3000";
+        if (args.length > 0) {
+            if (args[0].equals("-p")) {
+                port = args[1];
+            }
+        }
+        return port;
     }
 
     private static void initUI() {

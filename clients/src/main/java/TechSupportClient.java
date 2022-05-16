@@ -37,8 +37,20 @@ public final class TechSupportClient {
 
         initUI();
 
-        browser.navigation().loadUrlAndWait("http://localhost:3000/");
+        String port = getPort(args);
+        String url = String.format("http://localhost:%s/", port);
+        browser.navigation().loadUrlAndWait(url);
         browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("initializeTechSupport()"));
+    }
+
+    private static String getPort(String[] args) {
+        String port = "3000";
+        if (args.length > 0) {
+            if (args[0].equals("-p")) {
+                port = args[1];
+            }
+        }
+        return port;
     }
 
     private static void initUI() {

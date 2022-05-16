@@ -1,11 +1,16 @@
 const express = require('express');
 const app = express();
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
 const room = 'room';
 
-server.listen(3000);
+const args = process.argv.slice(2);
+const port = args.length > 0 ? args[0] === '-p' ? args[1] : 3000 : 3000;
+
+server.listen(port);
 
 app.use(express.static('public'));
 

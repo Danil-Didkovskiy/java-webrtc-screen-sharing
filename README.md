@@ -1,16 +1,32 @@
 ## Setup
 
 ```bash
-cd web-server/
+cd server/
 npm install
 ```
 
 ## Run
 
-Run the server:
+Start the server:
 
 ```bash
-npm run devStart
+node server.js -p port
 ```
 
-Then run `CustomerClient.main()` and `TechSupportClient.main()`. 
+Then run clients in other terminals:
+
+```bash
+cd ..
+```
+
+Run `CustomerClient`:
+
+```bash
+./gradlew runCustomerClient --args='-p port'
+```
+
+Run `TechSupportClient`:
+
+```bash
+./gradlew runTechSupportClient --args='-p port'
+```

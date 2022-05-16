@@ -73,6 +73,10 @@ function notifySupportRequestAccepted() {
     socket.emit('support-request-accepted');
 }
 
+/**
+ * Receives a video stream of the customer's screen and makes a call
+ * to tech support peer with the provision of the received stream.
+ */
 function startScreenSharing() {
     navigator.mediaDevices.getDisplayMedia({
         video: {
@@ -90,6 +94,12 @@ function startScreenSharing() {
     });
 }
 
+/**
+ * Listens for the end of the stream and emits an event to the server
+ * to notify that screen sharing has stopped.
+ *
+ * @param {MediaStream} stream
+ */
 function listenToStreamEnded(stream) {
     stream.getVideoTracks()[0].onended = () => {
         socket.emit('screen-sharing-stopped');
@@ -97,12 +107,20 @@ function listenToStreamEnded(stream) {
     };
 }
 
+/**
+ * Displays the video element with the given stream as the source of the media.
+ *
+ * @param {MediaStream} stream
+ */
 function addVideoStream(stream) {
     const video = document.querySelector('video');
     video.srcObject = stream;
     video.style.display = 'block';
 }
 
+/**
+ * Clears the video element and hides it.
+ */
 function removeVideoStream() {
     const video = document.querySelector('video');
     video.srcObject = null;
