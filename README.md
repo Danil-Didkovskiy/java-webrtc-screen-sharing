@@ -13,4 +13,4 @@ Run the server:
 npm run devStart
 ```
 
-Then run `CustomerBrowser.main()` and `TechSupportBrowser.main()`. 
+Then run `CustomerClient.main()` and `TechSupportClient.main()`. 

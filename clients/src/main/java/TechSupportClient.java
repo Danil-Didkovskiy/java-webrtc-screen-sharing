@@ -20,7 +20,7 @@ import static javax.swing.SwingUtilities.invokeLater;
  * <p>
  * Serves as soft for technical support.
  */
-public final class TechSupportBrowser {
+public final class TechSupportClient {
 
     private static JFrame frame;
     private static Browser browser;
@@ -31,7 +31,7 @@ public final class TechSupportBrowser {
 
         browser.set(InjectJsCallback.class, params -> {
             JsObject window = params.frame().executeJavaScript("window");
-            Objects.requireNonNull(window).putProperty("techSupportBrowser", new TechSupportBrowser());
+            Objects.requireNonNull(window).putProperty("techSupportBrowser", new TechSupportClient());
             return InjectJsCallback.Response.proceed();
         });
 

@@ -21,7 +21,7 @@ import static javax.swing.SwingUtilities.invokeLater;
  * <p>
  * Serves as soft for customer.
  */
-public final class CustomerBrowser {
+public final class CustomerClient {
 
     private static final String CUSTOMER_ID = "Walter White";
     private static Browser browser;
