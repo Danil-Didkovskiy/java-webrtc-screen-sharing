@@ -18,3 +18,13 @@ dependencies {
     implementation(jxbrowser.currentPlatform())
     implementation(jxbrowser.swing())
 }
+
+tasks.create<JavaExec>("runCustomerClient"){
+    classpath = java.sourceSets["main"].runtimeClasspath
+    mainClass.value("CustomerClient")
+}
+
+tasks.create<JavaExec>("runTechSupportClient"){
+    classpath = java.sourceSets["main"].runtimeClasspath
+    mainClass.value("TechSupportClient")
+}
