@@ -15,8 +15,7 @@ import java.util.List;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
 import static javax.swing.SwingUtilities.invokeLater;
-import static util.Clients.connectCustomerToServer;
-import static util.Clients.executeJS;
+import static util.Clients.*;
 
 /**
  * A customer client application that opens a window with a button to request technical support.
@@ -24,14 +23,15 @@ import static util.Clients.executeJS;
 public final class CustomerClient {
 
     private static final String CUSTOMER_ID = "Walter White";
-    private static Browser browser;
-    private static JPanel mainPanel;
+    private static CaptureSession captureSession;
+    private static Runnable confirmCaptureSessionSuccess;
+    private static Runnable requestTechSupport;
 
     public static void main(String[] args) {
 
         // Create an Engine and Browser instances.
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
-        browser = engine.newBrowser();
+        Browser browser = engine.newBrowser();
 
         // Handle a request to start a capture session.
         browser.set(StartCaptureSessionCallback.class, (params, tell) -> {
@@ -44,14 +44,26 @@ public final class CustomerClient {
             tell.selectSource(screen, AudioCaptureMode.CAPTURE);
         });
 
-        initUI();
-        connectCustomerToServer(browser, args, CUSTOMER_ID);
+        // Subscribe on capture session started event.
+        browser.on(CaptureSessionStarted.class, (event) -> {
+
+            // Get the capture session.
+            captureSession = event.capture();
+
+            // Invoke callback to confirm the capture session success.
+            confirmCaptureSessionSuccess.run();
+        });
+
+        requestTechSupport = () -> executeJS("notifySupportRequested()", browser);
+
+        initUI(browser);
+        connectCustomerClient(browser, args, CUSTOMER_ID);
     }
 
-    private static void initUI() {
+    private static void initUI(Browser browser) {
         invokeLater(() -> {
             JFrame frame = new JFrame("Customer Browser");
-            mainPanel = initMainPanel();
+            JPanel mainPanel = initMainPanel();
 
             frame.addWindowListener(new WindowAdapter() {
                 @Override
@@ -70,45 +82,35 @@ public final class CustomerClient {
     }
 
     private static JPanel initMainPanel() {
-        mainPanel = new JPanel();
+        JPanel panel = new JPanel();
         JButton callSupportButton = new JButton("Call Support");
         JButton stopSessionButton = new JButton("Stop session");
         ImageIcon loaderIcon = new ImageIcon("browsers/src/main/resources/spinner.gif");
         JLabel waitingForResponseLabel = new JLabel("Waiting for a response from support... ", loaderIcon, JLabel.CENTER);
         JLabel sharingScreenLabel = new JLabel("You are sharing the primary screen", JLabel.CENTER);
 
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.add(callSupportButton);
+        panel.setBackground(Color.WHITE);
+        panel.add(callSupportButton);
 
         callSupportButton.addActionListener(e -> {
-            executeJS("notifySupportRequested()", browser);
-            updateMainPanel(
+            requestTechSupport.run();
+            updatePanel(panel,
                     List.of(waitingForResponseLabel),
                     List.of(callSupportButton));
         });
 
-        browser.on(CaptureSessionStarted.class, (event) -> {
-            updateMainPanel(
-                    List.of(sharingScreenLabel, stopSessionButton),
-                    List.of(waitingForResponseLabel));
-
-            stopSessionButton.addActionListener(e -> {
-                CaptureSession captureSession = event.capture();
-                captureSession.stop();
-                updateMainPanel(
-                        List.of(callSupportButton),
-                        List.of(sharingScreenLabel, stopSessionButton));
-            });
+        stopSessionButton.addActionListener(e -> {
+            captureSession.stop();
+            updatePanel(panel,
+                    List.of(callSupportButton),
+                    List.of(sharingScreenLabel, stopSessionButton));
         });
 
-        return mainPanel;
-    }
+        confirmCaptureSessionSuccess = () ->
+                updatePanel(panel,
+                        List.of(sharingScreenLabel, stopSessionButton),
+                        List.of(waitingForResponseLabel));
 
-    private static void updateMainPanel(java.util.List<JComponent> componentsToAdd,
-                                        java.util.List<JComponent> componentsToRemove) {
-        componentsToAdd.forEach(component -> mainPanel.add(component));
-        componentsToRemove.forEach(component -> mainPanel.remove(component));
-        mainPanel.revalidate();
-        mainPanel.repaint();
+        return panel;
     }
 }

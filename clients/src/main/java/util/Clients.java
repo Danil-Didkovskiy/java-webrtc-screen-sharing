@@ -2,6 +2,9 @@ package util;
 
 import com.teamdev.jxbrowser.browser.Browser;
 
+import javax.swing.*;
+import java.util.List;
+
 /**
  * A utility for client applications.
  */
@@ -16,7 +19,7 @@ public final class Clients {
      * @param args       command line arguments that contain information about the port
      * @param customerId id of the customer to be connected
      */
-    public static void connectCustomerToServer(Browser browser, String[] args, String customerId) {
+    public static void connectCustomerClient(Browser browser, String[] args, String customerId) {
         loadHost(browser, args);
         executeJS(String.format("initializeCustomer('%s')", customerId), browser);
     }
@@ -27,7 +30,7 @@ public final class Clients {
      * @param browser the browser instance the tech support client use
      * @param args    command line arguments that contain information about the port
      */
-    public static void connectTechSupportToServer(Browser browser, String[] args) {
+    public static void connectTechSupportClient(Browser browser, String[] args) {
         loadHost(browser, args);
         executeJS("initializeTechSupport()", browser);
     }
@@ -42,6 +45,22 @@ public final class Clients {
         browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript(script));
     }
 
+    /**
+     * Updates the given instance of {@link JPanel} by adding and removing given components.
+     *
+     * @param panel              panel to be updated
+     * @param componentsToAdd    components to be added to a panel
+     * @param componentsToRemove components to be removed from a panel
+     */
+    public static void updatePanel(JPanel panel,
+                                   List<JComponent> componentsToAdd,
+                                   List<JComponent> componentsToRemove) {
+        componentsToAdd.forEach(panel::add);
+        componentsToRemove.forEach(panel::remove);
+        panel.revalidate();
+        panel.repaint();
+    }
+
     private static void loadHost(Browser browser, String[] args) {
         String port = getPort(args);
         String url = String.format("http://localhost:%s/", port);
@@ -53,7 +72,7 @@ public final class Clients {
     }
 
     /**
-     * Prevent instantiation of this utility class.
+     * Prevents instantiation of this utility class.
      */
     private Clients() {
     }
