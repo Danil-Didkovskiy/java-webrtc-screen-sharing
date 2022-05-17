@@ -1,7 +1,6 @@
 import com.teamdev.jxbrowser.browser.Browser;
 import com.teamdev.jxbrowser.browser.callback.InjectJsCallback;
 import com.teamdev.jxbrowser.engine.Engine;
-import com.teamdev.jxbrowser.engine.EngineOptions;
 import com.teamdev.jxbrowser.js.JsAccessible;
 import com.teamdev.jxbrowser.js.JsObject;
 import com.teamdev.jxbrowser.view.swing.BrowserView;
@@ -10,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
@@ -28,9 +26,12 @@ public final class TechSupportClient {
     private static Browser browser;
 
     public static void main(String[] args) {
+
+        // Create an Engine and Browser instances.
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
         browser = engine.newBrowser();
 
+        // Inject an instance of the Java object into JavaScript.
         browser.set(InjectJsCallback.class, params -> {
             JsObject window = params.frame().executeJavaScript("window");
             Objects.requireNonNull(window).putProperty("techSupportBrowser", new TechSupportClient());
@@ -61,6 +62,13 @@ public final class TechSupportClient {
         });
     }
 
+    /**
+     * Displays a message with a button to accept a support request from a customer with the given id.
+     *
+     * <p>This method can be invoked from JavaScript.
+     *
+     * @param customerId id of a customer requesting support
+     */
     @JsAccessible
     public void displayAcceptMessage(String customerId) {
         JPanel panel = new JPanel();

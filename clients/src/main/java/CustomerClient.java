@@ -6,13 +6,11 @@ import com.teamdev.jxbrowser.capture.CaptureSession;
 import com.teamdev.jxbrowser.capture.CaptureSource;
 import com.teamdev.jxbrowser.capture.CaptureSources;
 import com.teamdev.jxbrowser.engine.Engine;
-import com.teamdev.jxbrowser.engine.EngineOptions;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
@@ -30,12 +28,19 @@ public final class CustomerClient {
     private static JPanel mainPanel;
 
     public static void main(String[] args) {
+
+        // Create an Engine and Browser instances.
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
         browser = engine.newBrowser();
 
+        // Handle a request to start a capture session.
         browser.set(StartCaptureSessionCallback.class, (params, tell) -> {
             CaptureSources sources = params.sources();
+
+            // Get the capture source (the first entire screen).
             CaptureSource screen = sources.screens().get(0);
+
+            // Tell the browser instance to start a new capture session with capturing the audio content.
             tell.selectSource(screen, AudioCaptureMode.CAPTURE);
         });
 
