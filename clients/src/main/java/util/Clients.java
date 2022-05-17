@@ -16,7 +16,7 @@ public final class Clients {
      * Connects the customer client application with the given customer id to the server.
      *
      * @param browser    the browser instance the customer client use
-     * @param args       command line arguments that contain information about the port
+     * @param args       command line arguments that can contain information about the port
      * @param customerId id of the customer to be connected
      */
     public static void connectCustomerClient(Browser browser, String[] args, String customerId) {
@@ -28,7 +28,7 @@ public final class Clients {
      * Connects the tech support client application to the server.
      *
      * @param browser the browser instance the tech support client use
-     * @param args    command line arguments that contain information about the port
+     * @param args    command line arguments that can contain information about the port
      */
     public static void connectTechSupportClient(Browser browser, String[] args) {
         loadHost(browser, args);
