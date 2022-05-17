@@ -40,7 +40,7 @@ function initializeTechSupport() {
  * Provides customer peer initialization with given customer id
  * and subscribes to all events related to the customer side.
  *
- * @param {string} customerId
+ * @param {string} customerId id of the customer to be initiated
  */
 function initializeCustomer(customerId) {
     customerPeer = new Peer(customerId);
@@ -95,10 +95,10 @@ function startScreenSharing() {
 }
 
 /**
- * Listens for the end of the stream and emits an event to the server
+ * Listens to the end of the stream and emits an event to the server
  * to notify that screen sharing has stopped.
  *
- * @param {MediaStream} stream
+ * @param {MediaStream} stream media stream which ending you should listen to
  */
 function listenToStreamEnded(stream) {
     stream.getVideoTracks()[0].onended = () => {
@@ -110,7 +110,7 @@ function listenToStreamEnded(stream) {
 /**
  * Displays the video element with the given stream as the source of the media.
  *
- * @param {MediaStream} stream
+ * @param {MediaStream} stream media stream to be displayed
  */
 function addVideoStream(stream) {
     const video = document.querySelector('video');

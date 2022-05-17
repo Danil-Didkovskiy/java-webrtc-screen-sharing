@@ -13,7 +13,9 @@ Start the server:
 node server.js -p port
 ```
 
-Then run clients in other terminals:
+Then run clients in other terminals
+with the same `port` value in arguments.
+The default `port` value is 3000.
 
 ```bash
 cd ..

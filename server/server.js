@@ -7,8 +7,9 @@ const io = new Server(server);
 
 const room = 'room';
 
+const defaultPort = 3000;
 const args = process.argv.slice(2);
-const port = args.length > 0 ? args[0] === '-p' ? args[1] : 3000 : 3000;
+const port = args.length > 0 ? args[0] === '-p' ? args[1] : defaultPort : defaultPort;
 
 server.listen(port);
 

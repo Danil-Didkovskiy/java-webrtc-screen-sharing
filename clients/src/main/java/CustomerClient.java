@@ -6,20 +6,22 @@ import com.teamdev.jxbrowser.capture.CaptureSession;
 import com.teamdev.jxbrowser.capture.CaptureSource;
 import com.teamdev.jxbrowser.capture.CaptureSources;
 import com.teamdev.jxbrowser.engine.Engine;
+import com.teamdev.jxbrowser.engine.EngineOptions;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
 import static javax.swing.SwingUtilities.invokeLater;
+import static util.Clients.connectCustomerToServer;
+import static util.Clients.executeJS;
 
 /**
- * An application that opens a window with a button to request technical support.
- * <p>
- * Serves as soft for customer.
+ * A customer client application that opens a window with a button to request technical support.
  */
 public final class CustomerClient {
 
@@ -38,22 +40,7 @@ public final class CustomerClient {
         });
 
         initUI();
-
-        String port = getPort(args);
-        String url = String.format("http://localhost:%s/", port);
-        browser.navigation().loadUrlAndWait(url);
-        String initializeCustomerScript = String.format("initializeCustomer('%s')", CUSTOMER_ID);
-        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript(initializeCustomerScript));
-    }
-
-    private static String getPort(String[] args) {
-        String port = "3000";
-        if (args.length > 0) {
-            if (args[0].equals("-p")) {
-                port = args[1];
-            }
-        }
-        return port;
+        connectCustomerToServer(browser, args, CUSTOMER_ID);
     }
 
     private static void initUI() {
@@ -89,19 +76,19 @@ public final class CustomerClient {
         mainPanel.add(callSupportButton);
 
         callSupportButton.addActionListener(e -> {
-            browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("notifySupportRequested()"));
+            executeJS("notifySupportRequested()", browser);
             updateMainPanel(
                     List.of(waitingForResponseLabel),
                     List.of(callSupportButton));
         });
 
         browser.on(CaptureSessionStarted.class, (event) -> {
-            CaptureSession captureSession = event.capture();
             updateMainPanel(
                     List.of(sharingScreenLabel, stopSessionButton),
                     List.of(waitingForResponseLabel));
 
             stopSessionButton.addActionListener(e -> {
+                CaptureSession captureSession = event.capture();
                 captureSession.stop();
                 updateMainPanel(
                         List.of(callSupportButton),
