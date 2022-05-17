@@ -1,9 +1,9 @@
 # Java Remote Screen Sharing via WebRTC
 
-Java implementation of WebRTC screen sharing between customer client application
-and a technical support client application using [JxBrowser](https://www.teamdev.com/jxbrowser).
+Java implementation of WebRTC screen sharing between a customer client application
+and technical support client application using [JxBrowser](https://www.teamdev.com/jxbrowser).
 
-For the sake of simplicity, this implementation demonstrates
+For simplicity, this implementation demonstrates
 the one-to-one connection between two hardcoded clients.
 
 ## Requirements
