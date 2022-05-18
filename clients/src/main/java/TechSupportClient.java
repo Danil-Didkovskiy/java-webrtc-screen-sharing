@@ -35,7 +35,7 @@ public final class TechSupportClient {
         // so that we can communicate with that object from JS.
         browser.set(InjectJsCallback.class, params -> {
             JsObject window = params.frame().executeJavaScript("window");
-            Objects.requireNonNull(window).putProperty("techSupportBrowser", new TechSupportClient());
+            Objects.requireNonNull(window).putProperty("techSupportClient", new TechSupportClient());
             return InjectJsCallback.Response.proceed();
         });
 

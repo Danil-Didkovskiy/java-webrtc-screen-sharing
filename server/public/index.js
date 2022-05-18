@@ -24,7 +24,7 @@ function initializeTechSupport() {
     });
 
     socket.on('answer-support-request', (customerId) => {
-        window.techSupportBrowser.displayAcceptMessage(customerId);
+        window.techSupportClient.displayAcceptMessage(customerId);
     });
 
     socket.on('remove-video', () => {
