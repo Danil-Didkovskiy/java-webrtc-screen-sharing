@@ -8,18 +8,16 @@ import com.teamdev.jxbrowser.capture.CaptureSession;
 import com.teamdev.jxbrowser.capture.CaptureSource;
 import com.teamdev.jxbrowser.capture.CaptureSources;
 import com.teamdev.jxbrowser.engine.Engine;
-import com.teamdev.jxbrowser.engine.EngineOptions;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.nio.file.Path;
 import java.util.List;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
 import static com.teamdev.jxbrowser.examples.Clients.loadHost;
-import static com.teamdev.jxbrowser.examples.Clients.updatePanel;
+import static java.util.Arrays.asList;
 
 /**
  * A client application for a customer that opens a window with a button to request technical support.
@@ -98,23 +96,32 @@ public final class CustomerClient {
         callSupportButton.addActionListener(e -> {
             browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("requestSupport()"));
             updatePanel(panel,
-                    List.of(waitingForResponseLabel),
-                    List.of(callSupportButton));
+                    asList(waitingForResponseLabel),
+                    asList(callSupportButton));
         });
 
         stopSessionButton.addActionListener(e -> {
             captureSession.stop();
             updatePanel(panel,
-                    List.of(callSupportButton),
-                    List.of(sharingScreenLabel, stopSessionButton));
+                    asList(callSupportButton),
+                    asList(sharingScreenLabel, stopSessionButton));
         });
 
         confirmCaptureSessionSuccess = () ->
                 updatePanel(panel,
-                        List.of(sharingScreenLabel, stopSessionButton),
-                        List.of(waitingForResponseLabel));
+                        asList(sharingScreenLabel, stopSessionButton),
+                        asList(waitingForResponseLabel));
 
         return panel;
+    }
+
+    private void updatePanel(JPanel panel,
+                             List<JComponent> componentsToAdd,
+                             List<JComponent> componentsToRemove) {
+        componentsToAdd.forEach(panel::add);
+        componentsToRemove.forEach(panel::remove);
+        panel.revalidate();
+        panel.repaint();
     }
 
     public static void main(String[] args) {

@@ -3,7 +3,6 @@ package com.teamdev.jxbrowser.examples;
 import com.teamdev.jxbrowser.browser.Browser;
 import com.teamdev.jxbrowser.browser.callback.InjectJsCallback;
 import com.teamdev.jxbrowser.engine.Engine;
-import com.teamdev.jxbrowser.engine.EngineOptions;
 import com.teamdev.jxbrowser.js.JsAccessible;
 import com.teamdev.jxbrowser.js.JsObject;
 import com.teamdev.jxbrowser.view.swing.BrowserView;
@@ -12,13 +11,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.nio.file.Path;
-import java.util.List;
 import java.util.Objects;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
 import static com.teamdev.jxbrowser.examples.Clients.loadHost;
-import static com.teamdev.jxbrowser.examples.Clients.updatePanel;
 
 /**
  * A tech support client application that waits for a support request from a customer client application
@@ -85,10 +81,17 @@ public final class TechSupportClient {
 
         acceptSupportButton.addActionListener((event) -> {
             browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("acceptSupportRequest()"));
-            updatePanel(mainPanel, List.of(), List.of(label, acceptSupportButton));
+
+            mainPanel.remove(label);
+            mainPanel.remove(acceptSupportButton);
+            mainPanel.revalidate();
+            mainPanel.repaint();
         });
 
-        updatePanel(mainPanel, List.of(label, acceptSupportButton), List.of());
+        mainPanel.add(label);
+        mainPanel.add(acceptSupportButton);
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 
     public static void main(String[] args) {
