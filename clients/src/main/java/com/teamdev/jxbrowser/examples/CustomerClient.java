@@ -1,3 +1,5 @@
+package com.teamdev.jxbrowser.examples;
+
 import com.teamdev.jxbrowser.browser.Browser;
 import com.teamdev.jxbrowser.browser.callback.StartCaptureSessionCallback;
 import com.teamdev.jxbrowser.browser.event.CaptureSessionStarted;
@@ -15,52 +17,49 @@ import java.util.List;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
 import static javax.swing.SwingUtilities.invokeLater;
-import static util.Clients.*;
+import static com.teamdev.jxbrowser.examples.Clients.*;
 
 /**
- * A customer client application that opens a window with a button to request technical support.
+ * A client application for a customer that opens a window with a button to request technical support.
  */
 public final class CustomerClient {
 
-    private static final String CUSTOMER_ID = "Walter White";
+    private static Browser browser;
     private static CaptureSession captureSession;
     private static Runnable confirmCaptureSessionSuccess;
-    private static Runnable requestTechSupport;
 
     public static void main(String[] args) {
 
-        // Create an Engine and Browser instances.
+        // Start the Chromium process.
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
-        Browser browser = engine.newBrowser();
+        browser = engine.newBrowser();
 
-        // Handle a request to start a capture session.
+        // Register a callback that will be executed when the capture session starts.
         browser.set(StartCaptureSessionCallback.class, (params, tell) -> {
             CaptureSources sources = params.sources();
 
-            // Get the capture source (the first entire screen).
+            // Share the entire screen.
             CaptureSource screen = sources.screens().get(0);
 
-            // Tell the browser instance to start a new capture session with capturing the audio content.
+            // Tell the browser instance to start a new capture session.
+            // This is a programmatic version of selecting a sharing source in Chromium's dialog.
             tell.selectSource(screen, AudioCaptureMode.CAPTURE);
         });
 
-        // Subscribe on capture session started event.
-        browser.on(CaptureSessionStarted.class, (event) -> {
-
-            // Get the capture session.
+        // Register an event observer to be notified when the capture session starts.
+        browser.on(CaptureSessionStarted.class, event -> {
             captureSession = event.capture();
 
-            // Invoke callback to confirm the capture session success.
+            // Invoke a callback to confirm the capture session success.
             confirmCaptureSessionSuccess.run();
         });
 
-        requestTechSupport = () -> executeJS("notifySupportRequested()", browser);
-
-        initUI(browser);
-        connectCustomerClient(browser, args, CUSTOMER_ID);
+        initUI();
+        loadHost(browser, args);
+        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("initializeCustomer()"));
     }
 
-    private static void initUI(Browser browser) {
+    private static void initUI() {
         invokeLater(() -> {
             JFrame frame = new JFrame("Customer Browser");
             JPanel mainPanel = initMainPanel();
@@ -93,7 +92,7 @@ public final class CustomerClient {
         panel.add(callSupportButton);
 
         callSupportButton.addActionListener(e -> {
-            requestTechSupport.run();
+            browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("requestSupport()"));
             updatePanel(panel,
                     List.of(waitingForResponseLabel),
                     List.of(callSupportButton));

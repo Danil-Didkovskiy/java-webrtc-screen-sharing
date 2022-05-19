@@ -1,14 +1,12 @@
 # Java Remote Screen Sharing via WebRTC
 
-Java implementation of WebRTC screen sharing between a customer client application
-and technical support client application using [JxBrowser](https://www.teamdev.com/jxbrowser).
+This example project demonstrates how to share the entire screen with a single button click in one Java desktop application and observe the result in another using [JxBrowser](https://www.teamdev.com/jxbrowser).
 
-For simplicity, this implementation demonstrates
-the one-to-one connection between two hardcoded clients.
+For simplicity, we have configured a one-to-one WebRTC connection between two hardcoded clients.
 
 ## Requirements
 
-- JDK >= 9.
+- JDK 8+
 - Node.js 16.15.0
 
 ## Setup
@@ -22,24 +20,19 @@ npm install
 
 ## Run
 
-Start the server with specifying the `port` value. 
-The default `port` value is 3000.
+Start the server:
 
 ```bash
-node server.js -p port
+node server.js [-p 3000]
 ```
 
-Then run clients in other terminals with the same `port` value in arguments.
-Make sure you are in the root directory.
-
-Run `CustomerClient`:
+Run clients in other terminals with the same `port` value in arguments:
 
 ```bash
-./gradlew runCustomerClient --args='-p port'
+cd ..
+./gradlew runCustomerClient -Pport=3000
 ```
 
-Run `TechSupportClient`:
-
 ```bash
-./gradlew runTechSupportClient --args='-p port'
+./gradlew runTechSupportClient -Pport=3000
 ```

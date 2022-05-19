@@ -1,3 +1,5 @@
+package com.teamdev.jxbrowser.examples;
+
 import com.teamdev.jxbrowser.browser.Browser;
 import com.teamdev.jxbrowser.browser.callback.InjectJsCallback;
 import com.teamdev.jxbrowser.engine.Engine;
@@ -13,8 +15,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
+import static com.teamdev.jxbrowser.examples.Clients.*;
 import static javax.swing.SwingUtilities.invokeLater;
-import static util.Clients.*;
 
 /**
  * A tech support client application that waits for a support request from a customer client application
@@ -22,30 +24,29 @@ import static util.Clients.*;
  */
 public final class TechSupportClient {
 
+    private static Browser browser;
     private static JPanel mainPanel;
-    private static Runnable acceptSupportRequest;
 
     public static void main(String[] args) {
 
         // Create an Engine and Browser instances.
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
-        Browser browser = engine.newBrowser();
+        browser = engine.newBrowser();
 
         // Inject an instance of the Java object into JavaScript
         // so that we can communicate with that object from JS.
         browser.set(InjectJsCallback.class, params -> {
             JsObject window = params.frame().executeJavaScript("window");
-            Objects.requireNonNull(window).putProperty("techSupportClient", new TechSupportClient());
+            Objects.requireNonNull(window).putProperty("java", new TechSupportClient());
             return InjectJsCallback.Response.proceed();
         });
 
-        acceptSupportRequest = () -> executeJS("notifySupportRequestAccepted()", browser);
-
-        initUI(browser);
-        connectTechSupportClient(browser, args);
+        initUI();
+        loadHost(browser, args);
+        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("initializeTechSupport()"));
     }
 
-    private static void initUI(Browser browser) {
+    private static void initUI() {
         invokeLater(() -> {
             JFrame frame = new JFrame("Tech Support Browser");
             mainPanel = new JPanel();
@@ -70,18 +71,15 @@ public final class TechSupportClient {
     }
 
     /**
-     * Displays a message with a button to accept a support request from a customer with the given id.
-     *
-     * @param customerId id of a customer requesting support
+     * Displays a message with a button to accept a support request from a customer.
      */
     @JsAccessible
-    public void displayAcceptMessage(String customerId) {
-        String message = String.format("Received a request from %s", customerId);
-        JLabel label = new JLabel(message);
+    public void onSupportRequested() {
+        JLabel label = new JLabel("Received a request from customer");
         JButton acceptSupportButton = new JButton("Accept");
 
         acceptSupportButton.addActionListener((event) -> {
-            acceptSupportRequest.run();
+            browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("acceptSupportRequest()"));
             updatePanel(mainPanel, List.of(), List.of(label, acceptSupportButton));
         });
 

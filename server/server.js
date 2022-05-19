@@ -34,8 +34,8 @@ io.on('connection', (socket) => {
         });
     });
 
-    socket.on('support-requested', (customerId) => {
-        socket.to(room).emit('answer-support-request', customerId);
+    socket.on('support-requested', () => {
+        socket.to(room).emit('answer-support-request');
     });
 
     socket.on('support-request-accepted', () => {

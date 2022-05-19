@@ -1,4 +1,5 @@
 const TECH_SUPPORT_PEER_ID = 'tech-support';
+const CUSTOMER_PEER_ID = 'customer';
 
 const socket = io('/');
 
@@ -23,8 +24,8 @@ function initializeTechSupport() {
         });
     });
 
-    socket.on('answer-support-request', (customerId) => {
-        window.techSupportClient.displayAcceptMessage(customerId);
+    socket.on('answer-support-request', () => {
+        window.java.onSupportRequested();
     });
 
     socket.on('remove-video', () => {
@@ -39,11 +40,9 @@ function initializeTechSupport() {
 /**
  * Provides customer peer initialization with given customer id
  * and subscribes to all events related to the customer side.
- *
- * @param {string} customerId id of the customer to be initiated
  */
-function initializeCustomer(customerId) {
-    customerPeer = new Peer(customerId);
+function initializeCustomer() {
+    customerPeer = new Peer(CUSTOMER_PEER_ID);
     customerPeer.on('open', () => {
         socket.emit('join-customer');
     });
@@ -62,14 +61,14 @@ function initializeCustomer(customerId) {
 /**
  * Emits an event to the server to notify that customer has requested a support session.
  */
-function notifySupportRequested() {
-    socket.emit('support-requested', customerPeer.id);
+function requestSupport() {
+    socket.emit('support-requested');
 }
 
 /**
  * Emits an event to the server to notify that the support request was accepted.
  */
-function notifySupportRequestAccepted() {
+function acceptSupportRequest() {
     socket.emit('support-request-accepted');
 }
 
