@@ -37,7 +37,7 @@ node server.js [-p 3000]
 Run clients in other terminals with the same `port` value in arguments:
 
 ```bash
-cd ..
+cd clients/
 ./gradlew runCustomerClient -Pport=3000
 ```
 
