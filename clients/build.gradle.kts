@@ -19,12 +19,24 @@ dependencies {
     implementation(jxbrowser.swing())
 }
 
+val port: String by project
+
 tasks.create<JavaExec>("runCustomerClient"){
+    doFirst {
+        if (project.hasProperty("port")) {
+            systemProperty("example.port", port)
+        }
+    }
     classpath = java.sourceSets["main"].runtimeClasspath
-    mainClass.value("CustomerClient")
+    mainClass.value("com.teamdev.jxbrowser.examples.CustomerClient")
 }
 
 tasks.create<JavaExec>("runTechSupportClient"){
+    doFirst {
+        if (project.hasProperty("port")) {
+            systemProperty("example.port", port)
+        }
+    }
     classpath = java.sourceSets["main"].runtimeClasspath
-    mainClass.value("TechSupportClient")
+    mainClass.value("com.teamdev.jxbrowser.examples.TechSupportClient")
 }

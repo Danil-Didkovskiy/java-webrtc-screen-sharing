@@ -10,8 +10,6 @@ import java.util.List;
  */
 public final class Clients {
 
-    private static final String defaultPort = "3000";
-
     /**
      * Updates the given instance of {@link JPanel} by adding and removing given components.
      *
@@ -29,18 +27,14 @@ public final class Clients {
     }
 
     /**
+     * Loads a web resource to communicate with the server.
      *
-     * @param browser
-     * @param args
+     * @param browser a browser that should load the host
      */
-    public static void loadHost(Browser browser, String[] args) {
-        String port = getPort(args);
+    public static void loadHost(Browser browser) {
+        String port = System.getProperty("example.port");
         String url = String.format("http://localhost:%s/", port);
         browser.navigation().loadUrlAndWait(url);
-    }
-
-    private static String getPort(String[] args) {
-        return args.length > 0 ? args[0].equals("-p") ? args[1] : defaultPort : defaultPort;
     }
 
     /**

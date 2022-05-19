@@ -8,31 +8,39 @@ import com.teamdev.jxbrowser.capture.CaptureSession;
 import com.teamdev.jxbrowser.capture.CaptureSource;
 import com.teamdev.jxbrowser.capture.CaptureSources;
 import com.teamdev.jxbrowser.engine.Engine;
+import com.teamdev.jxbrowser.engine.EngineOptions;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.nio.file.Path;
 import java.util.List;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
-import static javax.swing.SwingUtilities.invokeLater;
-import static com.teamdev.jxbrowser.examples.Clients.*;
+import static com.teamdev.jxbrowser.examples.Clients.loadHost;
+import static com.teamdev.jxbrowser.examples.Clients.updatePanel;
 
 /**
  * A client application for a customer that opens a window with a button to request technical support.
  */
 public final class CustomerClient {
 
-    private static Browser browser;
-    private static CaptureSession captureSession;
-    private static Runnable confirmCaptureSessionSuccess;
+    private Browser browser;
+    private CaptureSession captureSession;
+    private Runnable confirmCaptureSessionSuccess;
 
-    public static void main(String[] args) {
-
-        // Start the Chromium process.
+    public void start() {
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
-        browser = engine.newBrowser();
+        browser = initBrowser(engine);
+        initUI();
+
+        loadHost(browser);
+        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("initializeCustomer()"));
+    }
+
+    private Browser initBrowser(Engine engine) {
+        Browser browser = engine.newBrowser();
 
         // Register a callback that will be executed when the capture session starts.
         browser.set(StartCaptureSessionCallback.class, (params, tell) -> {
@@ -54,37 +62,33 @@ public final class CustomerClient {
             confirmCaptureSessionSuccess.run();
         });
 
-        initUI();
-        loadHost(browser, args);
-        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("initializeCustomer()"));
+        return browser;
     }
 
-    private static void initUI() {
-        invokeLater(() -> {
-            JFrame frame = new JFrame("Customer Browser");
-            JPanel mainPanel = initMainPanel();
+    private void initUI() {
+        JFrame frame = new JFrame("Customer Browser");
+        JPanel mainPanel = initMainPanel();
 
-            frame.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    browser.engine().close();
-                }
-            });
-            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            frame.setSize(500, 300);
-            frame.setLayout(new GridBagLayout());
-            frame.getContentPane().setBackground(Color.WHITE);
-            frame.add(mainPanel, new GridBagConstraints());
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                browser.engine().close();
+            }
         });
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(500, 300);
+        frame.setLayout(new GridBagLayout());
+        frame.getContentPane().setBackground(Color.WHITE);
+        frame.add(mainPanel, new GridBagConstraints());
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
-    private static JPanel initMainPanel() {
+    private JPanel initMainPanel() {
         JPanel panel = new JPanel();
         JButton callSupportButton = new JButton("Call Support");
         JButton stopSessionButton = new JButton("Stop session");
-        ImageIcon loaderIcon = new ImageIcon("browsers/src/main/resources/spinner.gif");
+        ImageIcon loaderIcon = new ImageIcon("clients/src/main/resources/spinner.gif");
         JLabel waitingForResponseLabel = new JLabel("Waiting for a response from support... ", loaderIcon, JLabel.CENTER);
         JLabel sharingScreenLabel = new JLabel("You are sharing the primary screen", JLabel.CENTER);
 
@@ -111,5 +115,9 @@ public final class CustomerClient {
                         List.of(waitingForResponseLabel));
 
         return panel;
+    }
+
+    public static void main(String[] args) {
+        new CustomerClient().start();
     }
 }
