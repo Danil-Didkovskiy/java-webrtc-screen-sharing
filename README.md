@@ -42,5 +42,6 @@ cd clients/
 ```
 
 ```bash
+cd clients/
 ./gradlew runTechSupportClient -Pport=3000
 ```
