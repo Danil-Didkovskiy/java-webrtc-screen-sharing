@@ -22,7 +22,7 @@ import static com.teamdev.jxbrowser.examples.Clients.loadHost;
  */
 public final class Streamer {
 
-    private static final String APPLICATION_TITLE = "Streamer Browser";
+    private static final String APPLICATION_TITLE = "Streamer";
     private static final String START_SHARING_BUTTON_TEXT = "Share your screen...";
     private static final String STOP_SHARING_BUTTON_TEXT = "Stop sharing";
 
@@ -37,7 +37,7 @@ public final class Streamer {
         initUI();
 
         loadHost(browser);
-        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("initializeStreamer()"));
+        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("connectStreamerToWebRtcServer()"));
     }
 
     private void configureCaptureSession() {

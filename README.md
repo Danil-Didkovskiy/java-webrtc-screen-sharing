@@ -2,6 +2,8 @@
 
 This example project demonstrates how to share a screen between two Java applications using WebRTC and [JxBrowser](https://www.teamdev.com/jxbrowser).
 
+![Applications](/img/applications.png?raw=true)
+
 ## Description
 
 The project consists of two parts: a simplistic WebRTC [server](./server) and [client applications](./clients).

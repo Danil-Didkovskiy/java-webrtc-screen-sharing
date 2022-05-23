@@ -10,7 +10,7 @@ let call;
 /**
  * Provides receiver peer initialization and subscribes to all events related to the receiver side.
  */
-function initializeReceiver() {
+function connectReceiverToWebRtcServer() {
     receiverPeer = new Peer(RECEIVER_PEER_ID);
     receiverPeer.on('open', () => {
         socket.emit('join-receiver');
@@ -35,7 +35,7 @@ function initializeReceiver() {
 /**
  * Provides streamer peer initialization and subscribes to all events related to the streamer side.
  */
-function initializeStreamer() {
+function connectStreamerToWebRtcServer() {
     streamerPeer = new Peer(STREAMER_PEER_ID);
     streamerPeer.on('open', () => {
         socket.emit('join-streamer');

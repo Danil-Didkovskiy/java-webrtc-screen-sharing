@@ -17,7 +17,7 @@ import static com.teamdev.jxbrowser.examples.Clients.loadHost;
  */
 public final class Receiver {
 
-    private static final String APPLICATION_TITLE = "Receiver Browser";
+    private static final String APPLICATION_TITLE = "Receiver";
 
     public static void main(String[] args) {
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
@@ -25,7 +25,7 @@ public final class Receiver {
         initUI(browser);
 
         loadHost(browser);
-        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("initializeReceiver()"));
+        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("connectReceiverToWebRtcServer()"));
     }
 
     private static void initUI(Browser browser) {
