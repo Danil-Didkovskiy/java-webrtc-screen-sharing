@@ -18,9 +18,13 @@ import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
 import static com.teamdev.jxbrowser.examples.Clients.loadHost;
 
 /**
- * A client application for a customer that opens a window with a button to request technical support.
+ * An application that shares the primary screen.
  */
 public final class Streamer {
+
+    private static final String APPLICATION_TITLE = "Streamer Browser";
+    private static final String START_SHARING_BUTTON_TEXT = "Share your screen...";
+    private static final String STOP_SHARING_BUTTON_TEXT = "Stop sharing";
 
     private Browser browser;
     private CaptureSession captureSession;
@@ -29,29 +33,30 @@ public final class Streamer {
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
         browser = engine.newBrowser();
 
-        // Register a callback that will be executed when the capture session starts.
-        browser.set(StartCaptureSessionCallback.class, (params, tell) -> {
-            CaptureSources sources = params.sources();
-
-            // Share the entire screen.
-            CaptureSource screen = sources.screens().get(0);
-
-            // Tell the browser instance to start a new capture session.
-            // This is a programmatic version of selecting a sharing source in Chromium's dialog.
-            tell.selectSource(screen, AudioCaptureMode.CAPTURE);
-        });
-
-        // Register an event observer to be notified when the capture session starts.
-        browser.on(CaptureSessionStarted.class, event -> captureSession = event.capture());
-
+        configureCaptureSession();
         initUI();
 
         loadHost(browser);
         browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("initializeStreamer()"));
     }
 
+    private void configureCaptureSession() {
+
+        // When the browser is about to start a capturing session, select the capturing source:
+        browser.set(StartCaptureSessionCallback.class, (params, tell) -> {
+            CaptureSources sources = params.sources();
+
+            // Share the entire screen.
+            CaptureSource screen = sources.screens().get(0);
+            tell.selectSource(screen, AudioCaptureMode.CAPTURE);
+        });
+
+        // When the capture session starts, save the instance, so you can programmatically stop it later.
+        browser.on(CaptureSessionStarted.class, event -> captureSession = event.capture());
+    }
+
     private void initUI() {
-        JFrame frame = new JFrame("Streamer Browser");
+        JFrame frame = new JFrame(APPLICATION_TITLE);
         JPanel mainPanel = initMainPanel();
 
         frame.addWindowListener(new WindowAdapter() {
@@ -70,16 +75,14 @@ public final class Streamer {
 
     private JPanel initMainPanel() {
         JPanel panel = new JPanel();
-        JButton startSharingButton = new JButton("Share your screen...");
-        JButton stopSharingButton = new JButton("Stop sharing");
-        JLabel sharingScreenLabel = new JLabel("You are sharing the primary screen", JLabel.CENTER);
+        JButton startSharingButton = new JButton(START_SHARING_BUTTON_TEXT);
+        JButton stopSharingButton = new JButton(STOP_SHARING_BUTTON_TEXT);
 
         panel.add(startSharingButton);
 
         startSharingButton.addActionListener(e -> {
             browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("startScreenSharing()"));
             panel.remove(startSharingButton);
-            panel.add(sharingScreenLabel);
             panel.add(stopSharingButton);
             panel.revalidate();
             panel.repaint();
@@ -87,7 +90,6 @@ public final class Streamer {
 
         stopSharingButton.addActionListener(e -> {
             captureSession.stop();
-            panel.remove(sharingScreenLabel);
             panel.remove(stopSharingButton);
             panel.add(startSharingButton);
             panel.revalidate();

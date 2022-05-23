@@ -19,7 +19,7 @@ dependencies {
     implementation(jxbrowser.swing())
 }
 
-val port: String by project
+val port: String? by project
 
 val tasksMap = mapOf(
     "runStreamer" to "com.teamdev.jxbrowser.examples.Streamer",
@@ -29,7 +29,7 @@ val tasksMap = mapOf(
 tasksMap.forEach { (taskName, className) ->
     tasks.create<JavaExec>(taskName) {
         doFirst {
-            systemProperty("server.port", if (project.hasProperty("port")) port else "3000")
+            systemProperty("server.port", port ?: "3000")
         }
         classpath = java.sourceSets["main"].runtimeClasspath
         mainClass.value(className)

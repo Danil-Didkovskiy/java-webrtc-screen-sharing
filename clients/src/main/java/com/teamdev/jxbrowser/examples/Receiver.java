@@ -13,12 +13,13 @@ import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
 import static com.teamdev.jxbrowser.examples.Clients.loadHost;
 
 /**
- * A tech support client application that waits for a support request from a customer client application
- * and loads a browser widget to remotely observe the customer's screen.
+ * An application that receives a screen and shows it in a window.
  */
 public final class Receiver {
 
-    public void start() {
+    private static final String APPLICATION_TITLE = "Receiver Browser";
+
+    public static void main(String[] args) {
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
         Browser browser = engine.newBrowser();
         initUI(browser);
@@ -27,8 +28,8 @@ public final class Receiver {
         browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("initializeReceiver()"));
     }
 
-    private void initUI(Browser browser) {
-        JFrame frame = new JFrame("Receiver Browser");
+    private static void initUI(Browser browser) {
+        JFrame frame = new JFrame(APPLICATION_TITLE);
         BrowserView view = BrowserView.newInstance(browser);
 
         frame.addWindowListener(new WindowAdapter() {
@@ -42,9 +43,5 @@ public final class Receiver {
         frame.add(view, BorderLayout.CENTER);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        new Receiver().start();
     }
 }
