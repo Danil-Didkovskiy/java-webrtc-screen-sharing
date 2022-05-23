@@ -20,26 +20,18 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    socket.on('join-tech-support', () => {
+    socket.on('join-receiver', () => {
         socket.join(room);
         socket.on('disconnect', () => {
-            socket.to(room).emit('tech-support-disconnected');
+            socket.to(room).emit('receiver-disconnected');
         });
     });
 
-    socket.on('join-customer', () => {
+    socket.on('join-streamer', () => {
         socket.join(room);
         socket.on('disconnect', () => {
-            socket.to(room).emit('customer-disconnected');
+            socket.to(room).emit('streamer-disconnected');
         });
-    });
-
-    socket.on('support-requested', () => {
-        socket.to(room).emit('answer-support-request');
-    });
-
-    socket.on('support-request-accepted', () => {
-        socket.to(room).emit('share-screen');
     });
 
     socket.on('screen-sharing-stopped', () => {

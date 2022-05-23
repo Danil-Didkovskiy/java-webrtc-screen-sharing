@@ -21,22 +21,17 @@ dependencies {
 
 val port: String by project
 
-tasks.create<JavaExec>("runCustomerClient"){
-    doFirst {
-        if (project.hasProperty("port")) {
-            systemProperty("example.port", port)
-        }
-    }
-    classpath = java.sourceSets["main"].runtimeClasspath
-    mainClass.value("com.teamdev.jxbrowser.examples.CustomerClient")
-}
+val tasksMap = mapOf(
+    "runStreamer" to "com.teamdev.jxbrowser.examples.Streamer",
+    "runReceiver" to "com.teamdev.jxbrowser.examples.Receiver"
+)
 
-tasks.create<JavaExec>("runTechSupportClient"){
-    doFirst {
-        if (project.hasProperty("port")) {
-            systemProperty("example.port", port)
+tasksMap.forEach { (taskName, className) ->
+    tasks.create<JavaExec>(taskName) {
+        doFirst {
+            systemProperty("server.port", if (project.hasProperty("port")) port else "3000")
         }
+        classpath = java.sourceSets["main"].runtimeClasspath
+        mainClass.value(className)
     }
-    classpath = java.sourceSets["main"].runtimeClasspath
-    mainClass.value("com.teamdev.jxbrowser.examples.TechSupportClient")
 }

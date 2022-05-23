@@ -2,8 +2,6 @@ package com.teamdev.jxbrowser.examples;
 
 import com.teamdev.jxbrowser.browser.Browser;
 
-import static java.util.Objects.nonNull;
-
 /**
  * A utility for client applications.
  */
@@ -15,8 +13,7 @@ public final class Clients {
      * @param browser a browser that should load the host
      */
     public static void loadHost(Browser browser) {
-        String portFromProperties = System.getProperty("example.port");
-        String port = nonNull(portFromProperties) ? portFromProperties : "3000";
+        String port = System.getProperty("server.port");
         String url = String.format("http://localhost:%s/", port);
         browser.navigation().loadUrlAndWait(url);
     }

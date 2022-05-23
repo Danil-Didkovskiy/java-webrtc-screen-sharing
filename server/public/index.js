@@ -1,57 +1,47 @@
-const TECH_SUPPORT_PEER_ID = 'tech-support';
-const CUSTOMER_PEER_ID = 'customer';
+const RECEIVER_PEER_ID = 'receiver';
+const STREAMER_PEER_ID = 'streamer';
 
 const socket = io('/');
 
-let customerPeer;
-let techSupportPeer;
+let receiverPeer;
+let streamerPeer;
 let call;
 
 /**
- * Provides tech support peer initialization
- * and subscribes to all events related to the tech support side.
+ * Provides receiver peer initialization and subscribes to all events related to the receiver side.
  */
-function initializeTechSupport() {
-    techSupportPeer = new Peer(TECH_SUPPORT_PEER_ID);
-    techSupportPeer.on('open', () => {
-        socket.emit('join-tech-support');
+function initializeReceiver() {
+    receiverPeer = new Peer(RECEIVER_PEER_ID);
+    receiverPeer.on('open', () => {
+        socket.emit('join-receiver');
     });
 
-    techSupportPeer.on('call', (call) => {
+    receiverPeer.on('call', (call) => {
         call.answer();
         call.on('stream', (stream) => {
             addVideoStream(stream);
         });
     });
 
-    socket.on('answer-support-request', () => {
-        window.java.onSupportRequested();
-    });
-
     socket.on('remove-video', () => {
         removeVideoStream();
     });
 
-    socket.on('customer-disconnected', () => {
+    socket.on('streamer-disconnected', () => {
         removeVideoStream();
     });
 }
 
 /**
- * Provides customer peer initialization with given customer id
- * and subscribes to all events related to the customer side.
+ * Provides streamer peer initialization and subscribes to all events related to the streamer side.
  */
-function initializeCustomer() {
-    customerPeer = new Peer(CUSTOMER_PEER_ID);
-    customerPeer.on('open', () => {
-        socket.emit('join-customer');
+function initializeStreamer() {
+    streamerPeer = new Peer(STREAMER_PEER_ID);
+    streamerPeer.on('open', () => {
+        socket.emit('join-streamer');
     });
 
-    socket.on('share-screen', () => {
-        startScreenSharing();
-    });
-
-    socket.on('tech-support-disconnected', () => {
+    socket.on('receiver-disconnected', () => {
         if (call) {
             call.close();
         }
@@ -59,22 +49,7 @@ function initializeCustomer() {
 }
 
 /**
- * Emits an event to the server to notify that customer has requested a support session.
- */
-function requestSupport() {
-    socket.emit('support-requested');
-}
-
-/**
- * Emits an event to the server to notify that the support request was accepted.
- */
-function acceptSupportRequest() {
-    socket.emit('support-request-accepted');
-}
-
-/**
- * Receives a video stream of the customer's screen and makes a call
- * to tech support peer with the provision of the received stream.
+ * Starts a screen sharing session between the streamer and the receiver.
  */
 function startScreenSharing() {
     navigator.mediaDevices.getDisplayMedia({
@@ -86,8 +61,8 @@ function startScreenSharing() {
             noiseSuppression: true
         }
     }).then(stream => {
-        if (customerPeer) {
-            call = customerPeer.call(TECH_SUPPORT_PEER_ID, stream);
+        if (streamerPeer) {
+            call = streamerPeer.call(RECEIVER_PEER_ID, stream);
         }
         listenToStreamEnded(stream);
     });
