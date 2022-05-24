@@ -8,7 +8,8 @@ let streamerPeer;
 let call;
 
 /**
- * Provides receiver peer initialization and subscribes to all events related to the receiver side.
+ * Initializes and connects the receiver peer to the server
+ * and subscribes to all events related to the receiver side.
  */
 function connectReceiverToWebRtcServer() {
     receiverPeer = new Peer(RECEIVER_PEER_ID);
@@ -33,7 +34,8 @@ function connectReceiverToWebRtcServer() {
 }
 
 /**
- * Provides streamer peer initialization and subscribes to all events related to the streamer side.
+ * Initializes and connects the streamer peer to the server
+ * and subscribes to all events related to the streamer side.
  */
 function connectStreamerToWebRtcServer() {
     streamerPeer = new Peer(STREAMER_PEER_ID);

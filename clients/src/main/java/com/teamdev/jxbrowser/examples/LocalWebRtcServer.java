@@ -14,7 +14,7 @@ public final class LocalWebRtcServer {
      * Connects a client of the given type to the local WebRTC server.
      *
      * @param clientType a type of client to be connected
-     * @param browser a browser instance the client use
+     * @param browser    a browser instance the client use
      */
     public static void connect(ClientType clientType, Browser browser) {
         browser.navigation().loadUrlAndWait(url);

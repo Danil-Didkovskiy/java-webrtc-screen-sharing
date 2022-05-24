@@ -22,8 +22,8 @@ public final class Receiver {
     public static void main(String[] args) {
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
         Browser browser = engine.newBrowser();
-        initUI(browser);
 
+        initUI(browser);
         LocalWebRtcServer.connect(RECEIVER, browser);
     }
 

@@ -35,7 +35,6 @@ public final class Streamer {
 
         configureCaptureSession();
         initUI();
-
         LocalWebRtcServer.connect(STREAMER, browser);
     }
 
