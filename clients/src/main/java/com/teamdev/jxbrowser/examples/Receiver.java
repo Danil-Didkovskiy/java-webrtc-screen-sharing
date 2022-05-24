@@ -10,7 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
-import static com.teamdev.jxbrowser.examples.Clients.loadHost;
+import static com.teamdev.jxbrowser.examples.LocalWebRtcServer.ClientType.RECEIVER;
 
 /**
  * An application that receives a screen and shows it in a window.
@@ -24,8 +24,7 @@ public final class Receiver {
         Browser browser = engine.newBrowser();
         initUI(browser);
 
-        loadHost(browser);
-        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("connectReceiverToWebRtcServer()"));
+        LocalWebRtcServer.connect(RECEIVER, browser);
     }
 
     private static void initUI(Browser browser) {

@@ -15,7 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
-import static com.teamdev.jxbrowser.examples.Clients.loadHost;
+import static com.teamdev.jxbrowser.examples.LocalWebRtcServer.ClientType.STREAMER;
 
 /**
  * An application that shares the primary screen.
@@ -36,8 +36,7 @@ public final class Streamer {
         configureCaptureSession();
         initUI();
 
-        loadHost(browser);
-        browser.mainFrame().ifPresent(mainFrame -> mainFrame.executeJavaScript("connectStreamerToWebRtcServer()"));
+        LocalWebRtcServer.connect(STREAMER, browser);
     }
 
     private void configureCaptureSession() {
