@@ -1,17 +1,17 @@
-const express = require('express');
-const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
+import express from 'express';
+import http from 'http';
+import { Server as SocketIO } from "socket.io";
 
+const app = express();
+const httpServer = http.createServer(app);
+const io = new SocketIO(httpServer);
 const room = 'room';
 
 const defaultPort = 3000;
 const args = process.argv.slice(2);
 const port = args.length > 0 ? args[0] === '-p' ? args[1] : defaultPort : defaultPort;
 
-server.listen(port);
+httpServer.listen(port);
 
 app.use(express.static('public'));
 
