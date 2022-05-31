@@ -1,1 +1,1 @@
-rootProject.name = "screen-sharing-tech-support.clients"
+rootProject.name = "java-webrtc-screen-sharing.clients"

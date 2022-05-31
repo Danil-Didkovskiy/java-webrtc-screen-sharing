@@ -10,25 +10,28 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
-import static com.teamdev.jxbrowser.examples.LocalWebRtcServer.ClientType.RECEIVER;
 
 /**
- * An application that receives a screen and shows it in a window.
+ * An application that receives a screen sharing stream and shows it.
  */
 public final class Receiver {
-
-    private static final String APPLICATION_TITLE = "Receiver";
 
     public static void main(String[] args) {
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
         Browser browser = engine.newBrowser();
 
         initUI(browser);
-        LocalWebRtcServer.connect(RECEIVER, browser);
+        navigateToLocalhost(browser);
+    }
+
+    private static void navigateToLocalhost(Browser browser) {
+        String port = System.getProperty("server.port");
+        String url = String.format("http://localhost:%s/", port);
+        browser.navigation().loadUrlAndWait(url);
     }
 
     private static void initUI(Browser browser) {
-        JFrame frame = new JFrame(APPLICATION_TITLE);
+        JFrame frame = new JFrame("Receiver");
         BrowserView view = BrowserView.newInstance(browser);
 
         frame.addWindowListener(new WindowAdapter() {

@@ -8,8 +8,7 @@ let streamerPeer;
 let call;
 
 /**
- * Initializes and connects the receiver peer to the server
- * and subscribes to all events related to the receiver side.
+ * Connects the receiver browser to the WebRTC server.
  */
 function connectReceiverToWebRtcServer() {
     receiverPeer = new Peer(RECEIVER_PEER_ID);
@@ -34,8 +33,7 @@ function connectReceiverToWebRtcServer() {
 }
 
 /**
- * Initializes and connects the streamer peer to the server
- * and subscribes to all events related to the streamer side.
+ * Connects the streamer browser to the WebRTC server.
  */
 function connectStreamerToWebRtcServer() {
     streamerPeer = new Peer(STREAMER_PEER_ID);
@@ -66,21 +64,16 @@ function startScreenSharing() {
         if (streamerPeer) {
             call = streamerPeer.call(RECEIVER_PEER_ID, stream);
         }
-        listenToStreamEnded(stream);
+        stream.getVideoTracks()[0].onended = closeRemoteSharing;
     });
 }
 
 /**
- * Listens to the end of the stream and emits an event to the server
- * to notify that screen sharing has stopped.
- *
- * @param {MediaStream} stream media stream which ending you should listen to
+ * Notifies the server that screen sharing is stopped.
  */
-function listenToStreamEnded(stream) {
-    stream.getVideoTracks()[0].onended = () => {
-        socket.emit('screen-sharing-stopped');
-        call.close();
-    };
+function closeRemoteSharing() {
+    socket.emit('screen-sharing-stopped');
+    call.close();
 }
 
 /**

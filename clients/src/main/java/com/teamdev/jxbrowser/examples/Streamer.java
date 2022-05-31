@@ -15,15 +15,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import static com.teamdev.jxbrowser.engine.RenderingMode.HARDWARE_ACCELERATED;
-import static com.teamdev.jxbrowser.examples.LocalWebRtcServer.ClientType.STREAMER;
 
 /**
  * An application that shares the primary screen.
  */
 public final class Streamer {
 
-    private static final String APPLICATION_TITLE = "Streamer";
-    private static final String START_SHARING_BUTTON_TEXT = "Share your screen...";
+    private static final String START_SHARING_BUTTON_TEXT = "Share your screen";
     private static final String STOP_SHARING_BUTTON_TEXT = "Stop sharing";
 
     private Browser browser;
@@ -33,28 +31,32 @@ public final class Streamer {
         Engine engine = Engine.newInstance(HARDWARE_ACCELERATED);
         browser = engine.newBrowser();
 
-        configureCaptureSession();
+        configureCapturing();
         initUI();
-        LocalWebRtcServer.connect(STREAMER, browser);
+        navigateToLocalhost(browser);
     }
 
-    private void configureCaptureSession() {
+    private static void navigateToLocalhost(Browser browser) {
+        String port = System.getProperty("server.port");
+        String url = String.format("http://localhost:%s/", port);
+        browser.navigation().loadUrlAndWait(url);
+    }
 
+    private void configureCapturing() {
         // When the browser is about to start a capturing session, select the capturing source:
         browser.set(StartCaptureSessionCallback.class, (params, tell) -> {
             CaptureSources sources = params.sources();
-
             // Share the entire screen.
             CaptureSource screen = sources.screens().get(0);
             tell.selectSource(screen, AudioCaptureMode.CAPTURE);
         });
 
-        // When the capture session starts, save the instance, so you can programmatically stop it later.
+        // When the capture session starts, save it to programmatically stop it later.
         browser.on(CaptureSessionStarted.class, event -> captureSession = event.capture());
     }
 
     private void initUI() {
-        JFrame frame = new JFrame(APPLICATION_TITLE);
+        JFrame frame = new JFrame("Streamer");
         JPanel mainPanel = initMainPanel();
 
         frame.addWindowListener(new WindowAdapter() {

@@ -19,7 +19,6 @@ dependencies {
     implementation(jxbrowser.swing())
 }
 
-
 val tasksMap = mapOf(
     "runStreamer" to "com.teamdev.jxbrowser.examples.Streamer",
     "runReceiver" to "com.teamdev.jxbrowser.examples.Receiver"
