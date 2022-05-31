@@ -34,6 +34,7 @@ public final class Streamer {
         configureCapturing();
         initUI();
         navigateToLocalhost(browser);
+        browser.mainFrame().ifPresent(frame -> frame.executeJavaScript("connectStreamerToWebRtcServer()"));
     }
 
     private static void navigateToLocalhost(Browser browser) {

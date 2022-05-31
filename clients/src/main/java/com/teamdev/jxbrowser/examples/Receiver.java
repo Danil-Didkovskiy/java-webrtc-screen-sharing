@@ -22,6 +22,7 @@ public final class Receiver {
 
         initUI(browser);
         navigateToLocalhost(browser);
+        browser.mainFrame().ifPresent(frame -> frame.executeJavaScript("connectReceiverToWebRtcServer()"));
     }
 
     private static void navigateToLocalhost(Browser browser) {
