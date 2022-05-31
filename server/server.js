@@ -1,15 +1,22 @@
 import express from 'express';
 import http from 'http';
 import { Server as SocketIO } from "socket.io";
+import { Command } from 'commander';
 
 const app = express();
 const httpServer = http.createServer(app);
 const io = new SocketIO(httpServer);
 const room = 'room';
+const program = new Command();
 
+program
+    .option('-p, --port <value>', 'port value');
+
+program.parse(process.argv);
+
+const options = program.opts();
 const defaultPort = 3000;
-const args = process.argv.slice(2);
-const port = args.length > 0 ? args[0] === '-p' ? args[1] : defaultPort : defaultPort;
+const port = options.port ? options.port : defaultPort;
 
 httpServer.listen(port);
 
