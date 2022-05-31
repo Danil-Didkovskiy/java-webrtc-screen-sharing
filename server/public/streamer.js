@@ -2,7 +2,7 @@ const STREAMER_PEER_ID = 'streamer';
 const socket = io('/');
 
 let streamerPeer;
-let call;
+let connection;
 
 /**
  * Connects the streamer browser to the WebRTC server.
@@ -14,8 +14,8 @@ function connectStreamerToWebRtcServer() {
     });
 
     socket.on('receiver-disconnected', () => {
-        if (call) {
-            call.close();
+        if (connection) {
+            connection.close();
         }
     });
 }
@@ -34,7 +34,7 @@ function startScreenSharing() {
         }
     }).then(stream => {
         if (streamerPeer) {
-            call = streamerPeer.call("receiver", stream);
+            connection = streamerPeer.call("receiver", stream);
         }
         stream.getVideoTracks()[0].onended = closeRemoteSharing;
     });
@@ -45,5 +45,5 @@ function startScreenSharing() {
  */
 function closeRemoteSharing() {
     socket.emit('screen-sharing-stopped');
-    call.close();
+    connection.close();
 }
