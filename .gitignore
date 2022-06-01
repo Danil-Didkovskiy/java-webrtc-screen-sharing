@@ -1,5 +1,5 @@
 # Project exclude paths
-/.gradle/
-/browsers/build/
-/browsers/build/classes/java/main/
-/web-server/node_modules/
+.gradle
+/clients/build/
+/clients/build/classes/java/main/
+/server/node_modules/
