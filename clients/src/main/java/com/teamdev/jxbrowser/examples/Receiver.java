@@ -22,12 +22,11 @@ public final class Receiver {
 
         initUI(browser);
         navigateToLocalhost(browser);
-        browser.mainFrame().ifPresent(frame -> frame.executeJavaScript("connectReceiverToWebRtcServer()"));
     }
 
     private static void navigateToLocalhost(Browser browser) {
         String port = System.getProperty("server.port");
-        String url = String.format("http://localhost:%s/", port);
+        String url = String.format("http://localhost:%s/receiver", port);
         browser.navigation().loadUrlAndWait(url);
     }
 

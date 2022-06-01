@@ -2,16 +2,17 @@ import express from 'express';
 import http from 'http';
 import { Server as SocketIO } from "socket.io";
 import { Command } from 'commander';
+import * as url from 'url';
 
 const app = express();
 const httpServer = http.createServer(app);
 const io = new SocketIO(httpServer);
 const room = 'room';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const program = new Command();
 
 program
     .option('-p, --port <value>', 'port value');
-
 program.parse(process.argv);
 
 const options = program.opts();
@@ -22,8 +23,12 @@ httpServer.listen(port);
 
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+app.get('/streamer', (req, res) => {
+    res.sendFile(__dirname + 'public/streamer.html');
+});
+
+app.get('/receiver', (req, res) => {
+    res.sendFile(__dirname + 'public/receiver.html');
 });
 
 io.on('connection', (socket) => {

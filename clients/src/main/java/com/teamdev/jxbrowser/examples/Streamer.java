@@ -34,12 +34,11 @@ public final class Streamer {
         configureCapturing();
         initUI();
         navigateToLocalhost(browser);
-        browser.mainFrame().ifPresent(frame -> frame.executeJavaScript("connectStreamerToWebRtcServer()"));
     }
 
     private static void navigateToLocalhost(Browser browser) {
         String port = System.getProperty("server.port");
-        String url = String.format("http://localhost:%s/", port);
+        String url = String.format("http://localhost:%s/streamer", port);
         browser.navigation().loadUrlAndWait(url);
     }
 

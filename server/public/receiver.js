@@ -1,4 +1,7 @@
 const RECEIVER_PEER_ID = 'receiver';
+const socket = io();
+
+connectReceiverToWebRtcServer();
 
 /**
  * Connects the receiver browser to the WebRTC server.
