@@ -8,14 +8,14 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = new SocketIO(httpServer);
 const room = 'room';
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const rootPath = url.fileURLToPath(new URL('.', import.meta.url));
 
 app.use(express.static('public'));
 app.get('/streamer', (req, res) => {
-    res.sendFile(__dirname + 'public/streamer.html');
+    res.sendFile(rootPath + 'public/streamer.html');
 });
 app.get('/receiver', (req, res) => {
-    res.sendFile(__dirname + 'public/receiver.html');
+    res.sendFile(rootPath + 'public/receiver.html');
 });
 
 io.on('connection', (socket) => {
