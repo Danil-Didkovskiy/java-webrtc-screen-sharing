@@ -9,24 +9,11 @@ const httpServer = http.createServer(app);
 const io = new SocketIO(httpServer);
 const room = 'room';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-const program = new Command();
-
-program
-    .option('-p, --port <value>', 'port value');
-program.parse(process.argv);
-
-const options = program.opts();
-const defaultPort = 3000;
-const port = options.port ? options.port : defaultPort;
-
-httpServer.listen(port);
 
 app.use(express.static('public'));
-
 app.get('/streamer', (req, res) => {
     res.sendFile(__dirname + 'public/streamer.html');
 });
-
 app.get('/receiver', (req, res) => {
     res.sendFile(__dirname + 'public/receiver.html');
 });
@@ -50,3 +37,17 @@ io.on('connection', (socket) => {
         socket.to(room).emit('remove-video');
     });
 });
+
+httpServer.listen(getPortValue());
+
+function getPortValue() {
+    const program = new Command();
+    const defaultPort = 3000;
+
+    program
+        .option('-p, --port <value>', 'port value');
+    program.parse(process.argv);
+
+    const options = program.opts();
+    return options.port ? options.port : defaultPort;
+}
