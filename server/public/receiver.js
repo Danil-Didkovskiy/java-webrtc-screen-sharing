@@ -16,12 +16,12 @@
 const RECEIVER_PEER_ID = 'receiver';
 const socket = io();
 
-connectReceiverToWebRtcServer();
+connectToServer();
 
 /**
  * Connects the receiver browser to the WebRTC server.
  */
-function connectReceiverToWebRtcServer() {
+function connectToServer() {
     const receiverPeer = new Peer(RECEIVER_PEER_ID);
     receiverPeer.on('open', () => {
         socket.emit('join-receiver');

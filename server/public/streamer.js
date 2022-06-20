@@ -21,12 +21,12 @@ const socket = io();
 let streamerPeer;
 let connection;
 
-connectStreamerToWebRtcServer();
+connectToServer();
 
 /**
  * Connects the streamer browser to the WebRTC server.
  */
-function connectStreamerToWebRtcServer() {
+function connectToServer() {
     streamerPeer = new Peer(STREAMER_PEER_ID);
     streamerPeer.on('open', () => {
         socket.emit('join-streamer');
